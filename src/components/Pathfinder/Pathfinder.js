@@ -1,7 +1,8 @@
 import Node from 'components/Node/Node';
 import React, { useEffect, useState } from 'react';
-import { Wrapper } from './Pathfinder.style';
+import { GridWrapper, PathfinderWrapper, Wrapper } from './Pathfinder.style';
 import { dijkstra, getNodesInShortestPathOrder } from 'algorithms/dijkstra';
+import Menu from 'components/Menu/Menu';
 
 const START_NODE_ROW = 10;
 const START_NODE_COL = 15;
@@ -102,34 +103,36 @@ const Pathfinder = () => {
   };
 
   return (
-    <>
-      <button onClick={visualizeDijkstra}>Dijkstra</button>
+    <PathfinderWrapper>
+      <Menu visualizeDjikstra={visualizeDijkstra}></Menu>
       <Wrapper>
-        {grid.map((row, rowI) => {
-          return (
-            <div key={rowI}>
-              {row.map((node, nodeI) => {
-                const { row, col, isFinish, isStart, isWall } = node;
-                return (
-                  <Node
-                    key={nodeI}
-                    col={col}
-                    row={row}
-                    isStart={isStart}
-                    isFinish={isFinish}
-                    isWall={isWall}
-                    mousePress={mousePress}
-                    onMouseDown={(row, col) => mouseDown(row, col)}
-                    onMouseEnter={(row, col) => mouseEnter(row, col)}
-                    onMouseUp={() => mouseUp()}
-                  ></Node>
-                );
-              })}
-            </div>
-          );
-        })}
+        <GridWrapper>
+          {grid.map((row, rowI) => {
+            return (
+              <div key={rowI}>
+                {row.map((node, nodeI) => {
+                  const { row, col, isFinish, isStart, isWall } = node;
+                  return (
+                    <Node
+                      key={nodeI}
+                      col={col}
+                      row={row}
+                      isStart={isStart}
+                      isFinish={isFinish}
+                      isWall={isWall}
+                      mousePress={mousePress}
+                      onMouseDown={(row, col) => mouseDown(row, col)}
+                      onMouseEnter={(row, col) => mouseEnter(row, col)}
+                      onMouseUp={() => mouseUp()}
+                    ></Node>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </GridWrapper>
       </Wrapper>
-    </>
+    </PathfinderWrapper>
   );
 };
 
