@@ -5,6 +5,9 @@ export const Square = styled.div`
   height: 25px;
   outline: 1px solid grey;
   display: inline-block;
+  @media (max-width: 1000px) {
+    width: 5px;
+  }
   &.node-start {
     background-color: red;
   }

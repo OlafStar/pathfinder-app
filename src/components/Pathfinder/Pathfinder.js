@@ -4,10 +4,10 @@ import { GridWrapper, PathfinderWrapper, Wrapper } from './Pathfinder.style';
 import { dijkstra, getNodesInShortestPathOrder } from 'algorithms/dijkstra';
 import Menu from 'components/Menu/Menu';
 
-const START_NODE_ROW = 10;
-const START_NODE_COL = 15;
-const FINISH_NODE_ROW = 10;
-const FINISH_NODE_COL = 35;
+let START_NODE_ROW = 10;
+let START_NODE_COL = 15;
+let FINISH_NODE_ROW = 10;
+let FINISH_NODE_COL = 35;
 
 const getPageGrid = () => {
   const nodesArr = [];
@@ -45,9 +45,61 @@ const getNewGridWithWall = (grid, row, col) => {
   return newGrid;
 };
 
+const getNewGridWithStart = (grid, row, col) => {
+  const newGrid = grid.slice();
+  const node = newGrid[row][col];
+  const startNode = newGrid[START_NODE_ROW][START_NODE_COL];
+  const oldNode = {
+    ...startNode,
+    isStart: !startNode.isStart,
+  };
+  let newNode = {
+    ...node,
+    isStart: !node.isStart,
+  };
+  if (newNode.isWall) {
+    newNode = {
+      ...newNode,
+      isWall: !newNode.isWall,
+    };
+  }
+  newGrid[START_NODE_ROW][START_NODE_COL] = oldNode;
+  newGrid[row][col] = newNode;
+  START_NODE_ROW = row;
+  START_NODE_COL = col;
+  return newGrid;
+};
+
+const getNewGridWithFinish = (grid, row, col) => {
+  const newGrid = grid.slice();
+  const node = newGrid[row][col];
+  const startNode = newGrid[FINISH_NODE_ROW][FINISH_NODE_COL];
+  const oldNode = {
+    ...startNode,
+    isFinish: !startNode.isFinish,
+  };
+  let newNode = {
+    ...node,
+    isFinish: !node.isFinish,
+  };
+  if (newNode.isWall) {
+    newNode = {
+      ...newNode,
+      isWall: !newNode.isWall,
+    };
+  }
+  newGrid[FINISH_NODE_ROW][FINISH_NODE_COL] = oldNode;
+  newGrid[row][col] = newNode;
+  FINISH_NODE_ROW = row;
+  FINISH_NODE_COL = col;
+  return newGrid;
+};
+
 const Pathfinder = () => {
   const [grid, setGrid] = useState([]);
   const [mousePress, setMousePress] = useState(false);
+  const [start, setStart] = useState(false);
+  const [finish, setFinish] = useState(false);
 
   useEffect(() => {
     const grid = getPageGrid();
@@ -55,7 +107,16 @@ const Pathfinder = () => {
   }, []);
 
   const mouseDown = (row, col) => {
-    const newGrid = getNewGridWithWall(grid, row, col);
+    let newGrid;
+    if (!start && !finish) {
+      newGrid = getNewGridWithWall(grid, row, col);
+    } else if (start) {
+      newGrid = getNewGridWithStart(grid, row, col);
+      setStart(false);
+    } else if (finish) {
+      newGrid = getNewGridWithFinish(grid, row, col);
+      setFinish(false);
+    }
     setGrid(newGrid);
     setMousePress(true);
   };
@@ -104,7 +165,7 @@ const Pathfinder = () => {
 
   return (
     <PathfinderWrapper>
-      <Menu visualizeDjikstra={visualizeDijkstra}></Menu>
+      <Menu visualizeDjikstra={visualizeDijkstra} setStart={setStart} setFinish={setFinish}></Menu>
       <Wrapper>
         <GridWrapper>
           {grid.map((row, rowI) => {

@@ -8,4 +8,8 @@ export const MenuWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 10px;
+  & > * {
+    margin: 0 10px 0 10px;
+  }
 `;
